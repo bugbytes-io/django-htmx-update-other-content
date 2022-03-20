@@ -2,6 +2,52 @@
 
 {% block content %}
 
-Hi
+<div class="grid grid-cols-2 gap-4 items-center">
+    <div class="text-center">
+        <h1 class="font-medium leading-tight text-5xl mt-0 mb-2 text-blue-600">
+            {{ event.name }}
+        </h1>
+        <p id="event-count" class="text-sm text-purple-800 mb-6"
+            hx-get="{% url 'count' event.pk %}" hx-trigger="subscribe from:body">
+            {{ event.users.count }} people attending
+        </p>
+        <p>{% lorem %}</p>
+        
+        {% if user in event.users.all %}
+            <button type="button"
+                id="subscribe-btn"
+                class="mt-6 inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                hx-post="{% url 'unsubscribe' event.pk %}"
+                hx-target="#userlist"
+                hx-swap="outerHTML"
+            >
+                Unsubscribe
+            </button>
+        {% else %}
+
+        <button type="button"
+            id="subscribe-btn"
+            class="mt-6 inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+            hx-post="{% url 'subscribe' event.pk %}"
+            hx-target="#userlist"
+            hx-swap="beforeend"
+        >
+            Subscribe
+        </button>
+        {% endif %}
+
+    </div>
+    <div class="flex flex-col justify-center items-center">
+        <h3 class="font-medium leading-tight text-3xl mt-0 mb-2 text-blue-600">
+            Attendees
+        </h3>
+        <ul id="userlist" class="list-disc">
+            {% for user in event.users.all %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
 
 {% endblock %}
